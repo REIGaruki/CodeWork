@@ -20,7 +20,7 @@ public class StudentController {
     }
     @PutMapping("{id}")
     public Student putStudent(@PathVariable Long id, @RequestParam String name, @RequestParam int age) {
-        return studentService.uodateStudent(id, name, age);
+        return studentService.updateStudent(id, name, age);
     }
     @PostMapping
     public Student postStudent(@RequestParam String name, @RequestParam int age) {

@@ -2,6 +2,7 @@ package ru.hogwarts.school.service;
 
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,17 +17,30 @@ public class FacultyService {
         faculties.put(faculty.getId(), faculty);
         return faculty;
     }
+    public List<Faculty> getAllSFaculties() {
+        return faculties.values().stream().toList();
+    }
     public Faculty readFaculty(Long id) {
+        if (!faculties.containsKey(id)) {
+            throw new RuntimeException();
+        }
         return faculties.get(id);
     }
     public Faculty updateFaculty(Long id, String name, String color) {
+        if (!faculties.containsKey(id)) {
+            throw new RuntimeException();
+        }
         faculties.get(id).setName(name);
         faculties.get(id).setColor(color);
         return faculties.get(id);
     }
     public Faculty deleteFaculty(Long id) {
+        if (!faculties.containsKey(id)) {
+            throw new RuntimeException();
+        }
+        Faculty faculty = faculties.get(id);
         faculties.remove(id);
-        return faculties.get(id);
+        return faculty;
     }
 
     public List<Faculty> getFacultiesByColor(String color) {

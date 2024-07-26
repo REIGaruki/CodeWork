@@ -18,16 +18,29 @@ public class StudentService {
         return student;
     }
     public Student readStudent(Long id) {
+        if (!students.containsKey(id)) {
+            throw new RuntimeException();
+        }
         return students.get(id);
     }
-    public Student uodateStudent(Long id, String name, int age) {
+    public List<Student> getAllStudents() {
+        return students.values().stream().toList();
+    }
+    public Student updateStudent(Long id, String name, int age) {
+        if (!students.containsKey(id)) {
+            throw new RuntimeException();
+        }
         students.get(id).setName(name);
         students.get(id).setAge(age);
         return students.get(id);
     }
     public Student deleteStudent(Long id) {
+        if (!students.containsKey(id)) {
+            throw new RuntimeException();
+        }
+        Student student = students.get(id);
         students.remove(id);
-        return students.get(id);
+        return student;
     }
 
     public List<Student> getStudentsByAge(int age) {
