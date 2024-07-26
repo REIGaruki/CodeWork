@@ -18,7 +18,7 @@ public class FacultyService {
     public Faculty readFaculty(Long id) {
         return faculties.get(id);
     }
-    public Faculty uodateFaculty(Long id, String name, String color) {
+    public Faculty updateFaculty(Long id, String name, String color) {
         faculties.get(id).setName(name);
         faculties.get(id).setColor(color);
         return faculties.get(id);
