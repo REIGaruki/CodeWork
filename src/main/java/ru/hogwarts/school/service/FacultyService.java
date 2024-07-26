@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -26,5 +27,9 @@ public class FacultyService {
     public Faculty deleteFaculty(Long id) {
         faculties.remove(id);
         return faculties.get(id);
+    }
+
+    public List<Faculty> getFacultiesByColor(String color) {
+        return faculties.values().stream().filter(value -> value.getColor().equals(color)).toList();
     }
 }
