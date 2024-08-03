@@ -34,6 +34,13 @@ public class StudentController {
         }
         return ResponseEntity.ok(studentService.getStudentsByAge(age));
     }
+    @GetMapping("age")
+    public ResponseEntity<List<Student>> getStudentsByAgeInterval(@RequestParam int min, @RequestParam int max) {
+        if (min > max) {
+            return ResponseEntity.ok(studentService.getStudentsByAgeInterval(max, min));
+        }
+        return ResponseEntity.ok(studentService.getStudentsByAgeInterval(min, max));
+    }
     @PutMapping("{id}")
     public ResponseEntity<Student> putStudent(@PathVariable Long id, @RequestParam String name, @RequestParam int age) {
         Student student = studentService.updateStudent(id, name, age);

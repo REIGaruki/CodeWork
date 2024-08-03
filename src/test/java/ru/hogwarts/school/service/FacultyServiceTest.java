@@ -103,6 +103,26 @@ class FacultyServiceTest {
         Assertions.assertEquals(expected, actual);
     }
     @Test
+    @DisplayName("Should get all faculties of same color or name")
+    void getNameOrColor() {
+        List<Faculty> expected = new ArrayList<>(Arrays.asList(
+                new Faculty("Name1", "Green"),
+                new Faculty("Name2", "Green"),
+                new Faculty("Name3", "Green")
+        ));
+        when(repositoryMock.findFacultiesByNameOrColorIgnoreCase(null,"Green"))
+                .thenReturn(faculties.values().stream().filter(value -> value.getColor().equals("Green")).toList());
+        List<Faculty> actual = service.getFacultiesByColorOrName(null,"Green");
+        Assertions.assertEquals(expected, actual);
+        expected = new ArrayList<>(Arrays.asList(
+                new Faculty("Name1", "Green")
+        ));
+        when(repositoryMock.findFacultiesByNameOrColorIgnoreCase("Name1",null))
+                .thenReturn(faculties.values().stream().filter(value -> value.getName().equals("Name1")).toList());
+        actual = service.getFacultiesByColorOrName("Name1",null);
+        Assertions.assertEquals(expected, actual);
+    }
+    @Test
     @DisplayName("Should return null if such id not exist")
     void getNotFound() {
         when(repositoryMock.findById(6L)).thenReturn(null);
