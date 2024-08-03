@@ -93,7 +93,8 @@ class StudentServiceTest {
                 new Student("Name2", 11),
                 new Student("Name3", 11)
         ));
-        when(repositoryMock.findAll()).thenReturn(students.values().stream().toList());
+        when(repositoryMock.findStudentsByAge(11))
+                .thenReturn(students.values().stream().filter(value -> value.getAge() == 11).toList());
         List<Student> actual = service.getStudentsByAge(11);
         Assertions.assertEquals(expected, actual);
     }

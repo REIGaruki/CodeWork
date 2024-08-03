@@ -97,7 +97,8 @@ class FacultyServiceTest {
                 new Faculty("Name2", "Green"),
                 new Faculty("Name3", "Green")
         ));
-        when(repositoryMock.findAll()).thenReturn(faculties.values().stream().toList());
+        when(repositoryMock.findFacultiesByColor("Green"))
+                .thenReturn(faculties.values().stream().filter(value -> value.getColor().equals("Green")).toList());
         List<Faculty> actual = service.getFacultiesByColor("Green");
         Assertions.assertEquals(expected, actual);
     }
