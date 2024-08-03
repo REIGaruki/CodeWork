@@ -10,12 +10,11 @@ import java.util.Objects;
 public class Student {
     @Id
     @GeneratedValue
-    private final Long id;
+    private Long id;
     private String name;
     private int age;
 
-    public Student(Long id, String name, int age) {
-        this.id = id;
+    public Student(String name, int age) {
         this.name = name;
         this.age = age;
     }
