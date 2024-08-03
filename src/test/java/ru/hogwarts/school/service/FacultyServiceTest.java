@@ -76,7 +76,7 @@ class FacultyServiceTest {
     }
 
     @Test
-    @DisplayName("Should get all students of same age")
+    @DisplayName("Should get all faculties of same color")
     void getColor() {
         List<Faculty> expected = new ArrayList<>(Arrays.asList(
                 new Faculty(1L,"Name1", "Green"),
@@ -87,10 +87,10 @@ class FacultyServiceTest {
         Assertions.assertEquals(expected, actual);
     }
     @Test
-    @DisplayName("Should throw an exception if such id not exist")
+    @DisplayName("Should return null if such id not exist")
     void getNotFound() {
-        Assertions.assertThrows(RuntimeException.class, () -> service.readFaculty(6L));
-        Assertions.assertThrows(RuntimeException.class, () -> service.deleteFaculty(6L));
-        Assertions.assertThrows(RuntimeException.class, () -> service.updateFaculty(6L, "Name6", "Blue"));
+        Assertions.assertNull(service.readFaculty(6L));
+        Assertions.assertNull(service.deleteFaculty(6L));
+        Assertions.assertNull(service.updateFaculty(6L, "Name6", "Blue"));
     }
 }

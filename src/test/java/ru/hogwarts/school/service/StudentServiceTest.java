@@ -5,8 +5,6 @@ import ru.hogwarts.school.model.Student;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class StudentServiceTest {
     private final Map<Long, Student> students = new HashMap<>();
     StudentService service;
@@ -88,10 +86,10 @@ class StudentServiceTest {
         Assertions.assertEquals(expected, actual);
     }
     @Test
-    @DisplayName("Should throw an exception if such id not exist")
+    @DisplayName("Should return null if such id not exist")
     void getNotFound() {
-        Assertions.assertThrows(RuntimeException.class, () -> service.readStudent(6L));
-        Assertions.assertThrows(RuntimeException.class, () -> service.deleteStudent(6L));
-        Assertions.assertThrows(RuntimeException.class, () -> service.updateStudent(6L, "Name6", 13));
+        Assertions.assertNull(service.readStudent(6L));
+        Assertions.assertNull(service.deleteStudent(6L));
+        Assertions.assertNull(service.updateStudent(6L, "Name6", 13));
     }
 }
