@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.FacultyService;
 
 import java.util.List;
@@ -61,5 +62,9 @@ public class FacultyController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         return ResponseEntity.ok(faculty);
+    }
+    @GetMapping("students_of/{id}")
+    public ResponseEntity<List<Student>> getStudentsByFacultyID(@PathVariable Long id) {
+        return ResponseEntity.ok(facultyService.readFaculty(id).getStudents());
     }
 }
