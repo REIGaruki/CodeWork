@@ -1,6 +1,5 @@
 package ru.hogwarts.school.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.repository.FacultyRepository;
@@ -22,10 +21,13 @@ public class FacultyService {
         return facultyRepository.findAll();
     }
     public Faculty readFaculty(Long id) {
+        if (facultyRepository.findById(id) == null) {
+            return null;
+        }
         return facultyRepository.findById(id).get();
     }
     public Faculty updateFaculty(Long id, String name, String color) {
-        if (facultyRepository.findById(id).isEmpty()) {
+        if (facultyRepository.findById(id) == null) {
             return null;
         }
         facultyRepository.findById(id).get().setName(name);
@@ -33,7 +35,7 @@ public class FacultyService {
         return facultyRepository.findById(id).get();
     }
     public Faculty deleteFaculty(Long id) {
-        if (facultyRepository.findById(id).isEmpty()) {
+        if (facultyRepository.findById(id) == null) {
             return null;
         }
         Faculty faculty = facultyRepository.findById(id).get();
