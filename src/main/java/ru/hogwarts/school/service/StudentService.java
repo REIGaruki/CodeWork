@@ -9,8 +9,12 @@ import java.util.List;
 
 @Service
 public class StudentService {
-    @Autowired
-    private StudentRepository studentRepository;
+    private final StudentRepository studentRepository;
+
+    public StudentService(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
+    }
+
     public Student createStudent(String name, int age) {
         return studentRepository.save(new Student(name, age));
     }
@@ -18,7 +22,7 @@ public class StudentService {
         return studentRepository.findById(id).get();
     }
     public List<Student> getAllStudents() {
-        return studentRepository.findAll();
+        return studentRepository.findAll().stream().toList();
     }
     public Student updateStudent(Long id, String name, int age) {
         if (studentRepository.findById(id).isEmpty()) {

@@ -1,5 +1,6 @@
 package ru.hogwarts.school.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +12,8 @@ import java.util.List;
 @RestController
 @RequestMapping("faculties")
 public class FacultyController {
-    private final FacultyService facultyService = new FacultyService();
+    @Autowired
+    private FacultyService facultyService;
     @PostMapping
     public Faculty postFaculty(@RequestParam String name, @RequestParam String color) {
         return facultyService.createFaculty(name, color);
@@ -24,7 +26,11 @@ public class FacultyController {
         }
         return ResponseEntity.ok(faculty);
     }
-    @GetMapping("color")
+    @GetMapping("all")
+    public List<Faculty> getFaculties() {
+        return facultyService.getAllSFaculties();
+    }
+    @GetMapping
     public ResponseEntity<List<Faculty>> getFacultiesByColor(@RequestParam String color) {
         if (color == null || color.isBlank()) {
             return ResponseEntity.ok(List.of());

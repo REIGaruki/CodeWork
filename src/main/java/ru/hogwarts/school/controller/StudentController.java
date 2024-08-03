@@ -1,5 +1,6 @@
 package ru.hogwarts.school.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +12,8 @@ import java.util.List;
 @RestController
 @RequestMapping("students")
 public class StudentController {
-    private final StudentService studentService = new StudentService();
+    @Autowired
+    private StudentService studentService;
 
     @GetMapping("{id}")
     public ResponseEntity<Student> getStudent(@PathVariable Long id) {
@@ -20,6 +22,10 @@ public class StudentController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         return ResponseEntity.ok(student);
+    }
+    @GetMapping("all")
+    public List<Student> getStudents() {
+        return studentService.getAllStudents();
     }
     @GetMapping
     public ResponseEntity<List<Student>> getStudentsByAge(@RequestParam int age) {

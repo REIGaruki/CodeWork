@@ -18,6 +18,9 @@ public class Student {
         this.name = name;
         this.age = age;
     }
+    public Student(){
+
+    }
 
     public Long getId() {
         return id;
