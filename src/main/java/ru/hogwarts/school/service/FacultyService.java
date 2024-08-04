@@ -17,28 +17,34 @@ public class FacultyService {
     public Faculty createFaculty(String name, String color) {
        return facultyRepository.save(new Faculty(name, color));
     }
+
     public List<Faculty> getAllSFaculties() {
         return facultyRepository.findAll();
     }
+
     public Faculty readFaculty(Long id) {
-        if (facultyRepository.findById(id) == null) {
-            return null;
-        }
-        return facultyRepository.findById(id).get();
+        return facultyRepository.findById(id).orElse(null);
     }
+
     public Faculty updateFaculty(Long id, String name, String color) {
-        if (facultyRepository.findById(id) == null) {
+        Faculty faculty;
+        try {
+            faculty = readFaculty(id);
+        } catch (NullPointerException e) {
             return null;
         }
-        facultyRepository.findById(id).get().setName(name);
-        facultyRepository.findById(id).get().setColor(color);
-        return facultyRepository.findById(id).get();
+        faculty.setName(name);
+        faculty.setColor(color);
+        return facultyRepository.save(faculty);
     }
+
     public Faculty deleteFaculty(Long id) {
-        if (facultyRepository.findById(id) == null) {
+        Faculty faculty;
+        try {
+            faculty = readFaculty(id);
+        } catch (NullPointerException e) {
             return null;
         }
-        Faculty faculty = facultyRepository.findById(id).get();
         facultyRepository.deleteById(id);
         return faculty;
     }
@@ -46,4 +52,5 @@ public class FacultyService {
     public List<Faculty> getFacultiesByColor(String color) {
         return facultyRepository.findAll().stream().filter(value -> value.getColor().equals(color)).toList();
     }
+
 }
