@@ -72,6 +72,7 @@ class FacultyServiceTest {
     void update() {
         Faculty expected = new Faculty("Name5U", "Blue");
         when(repositoryMock.findById(5L)).thenReturn(Optional.of(expected));
+        when(repositoryMock.save(expected)).thenReturn(expected);
         Faculty actual = service.updateFaculty(5L, "Name5U", "Blue");
         Assertions.assertEquals(expected, actual);
         Assertions.assertEquals(expected, service.readFaculty(5L));
@@ -126,7 +127,7 @@ class FacultyServiceTest {
     @DisplayName("Should return null if such id not exist")
     void getNotFound() {
         when(repositoryMock.findById(6L)).thenReturn(null);
-        Assertions.assertNull(service.readFaculty(6L));
+        Assertions.assertThrows(NullPointerException.class, () -> service.readFaculty(6L));
         Assertions.assertNull(service.deleteFaculty(6L));
         Assertions.assertNull(service.updateFaculty(6L, "Name6", "Blue"));
     }

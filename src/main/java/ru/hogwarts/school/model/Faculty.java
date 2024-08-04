@@ -1,5 +1,6 @@
 package ru.hogwarts.school.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class Faculty {
         return id;
     }
 
+    @JsonIgnore
     public List<Student> getStudents() {
         return students;
     }
