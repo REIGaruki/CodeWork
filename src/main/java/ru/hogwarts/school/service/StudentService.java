@@ -17,28 +17,34 @@ public class StudentService {
     public Student createStudent(String name, int age) {
         return studentRepository.save(new Student(name, age));
     }
+
     public Student readStudent(Long id) {
-        if (studentRepository.findById(id) == null) {
-            return null;
-        }
-        return studentRepository.findById(id).get();
+        return studentRepository.findById(id).orElse(null);
     }
+
     public List<Student> getAllStudents() {
         return studentRepository.findAll().stream().toList();
     }
+
     public Student updateStudent(Long id, String name, int age) {
-        if (studentRepository.findById(id) == null) {
+        Student student;
+        try {
+            student = readStudent(id);
+        } catch (NullPointerException e) {
             return null;
         }
-        studentRepository.findById(id).get().setName(name);
-        studentRepository.findById(id).get().setAge(age);
-        return studentRepository.findById(id).get();
+        student.setName(name);
+        student.setAge(age);
+        return studentRepository.save(student);
     }
+
     public Student deleteStudent(Long id) {
-        if (studentRepository.findById(id) == null) {
+        Student student;
+        try {
+            student = readStudent(id);
+        } catch (NullPointerException e) {
             return null;
         }
-        Student student = studentRepository.findById(id).get();
         studentRepository.deleteById(id);
         return student;
     }
