@@ -106,12 +106,15 @@ class StudentServiceTest {
     }
 
     @Test
-    @DisplayName("Should return null if such id not exist")
+    @DisplayName("Should throw NPE if such id not exist")
     void getNotFound() {
         when(repositoryMock.findById(6L)).thenReturn(null);
-        Assertions.assertThrows(NullPointerException.class, () -> service.readStudent(6L));
-        Assertions.assertNull(service.deleteStudent(6L));
-        Assertions.assertNull(service.updateStudent(6L, "Name6", 13));
+        Assertions.assertThrows(NullPointerException.class,
+                () -> service.readStudent(6L));
+        Assertions.assertThrows(NullPointerException.class,
+                () -> service.deleteStudent(6L));
+        Assertions.assertThrows(NullPointerException.class,
+                () -> service.updateStudent(6L, "Name6", 13));
     }
 
 }

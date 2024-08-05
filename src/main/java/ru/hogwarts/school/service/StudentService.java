@@ -27,26 +27,25 @@ public class StudentService {
     }
 
     public Student updateStudent(Long id, String name, int age) {
-        Student student;
-        try {
-            student = readStudent(id);
-        } catch (NullPointerException e) {
+        if (studentRepository.findById(id).isPresent()) {
+            Student student = studentRepository.findById(id).get();
+            student.setAge(age);
+            student.setName(name);
+            studentRepository.save(student);
+            return student;
+        } else {
             return null;
         }
-        student.setName(name);
-        student.setAge(age);
-        return studentRepository.save(student);
     }
 
     public Student deleteStudent(Long id) {
-        Student student;
-        try {
-            student = readStudent(id);
-        } catch (NullPointerException e) {
+        if (studentRepository.findById(id).isPresent()) {
+            Student student = studentRepository.findById(id).get();
+            studentRepository.deleteById(id);
+            return student;
+        } else {
             return null;
         }
-        studentRepository.deleteById(id);
-        return student;
     }
 
     public List<Student> getStudentsByAge(int age) {

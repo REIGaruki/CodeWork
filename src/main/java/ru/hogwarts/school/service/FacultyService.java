@@ -27,26 +27,19 @@ public class FacultyService {
     }
 
     public Faculty updateFaculty(Long id, String name, String color) {
-        Faculty faculty;
-        try {
-            faculty = readFaculty(id);
-        } catch (NullPointerException e) {
-            return null;
-        }
+        return facultyRepository.findById(id).map(faculty -> {
         faculty.setName(name);
         faculty.setColor(color);
-        return facultyRepository.save(faculty);
+        facultyRepository.save(faculty);
+        return faculty;
+        }).orElse(null);
     }
 
     public Faculty deleteFaculty(Long id) {
-        Faculty faculty;
-        try {
-            faculty = readFaculty(id);
-        } catch (NullPointerException e) {
-            return null;
-        }
-        facultyRepository.deleteById(id);
-        return faculty;
+        return facultyRepository.findById(id).map(faculty -> {
+            facultyRepository.deleteById(id);
+            return faculty;
+        }).orElse(null);
     }
 
     public List<Faculty> getFacultiesByColor(String color) {
