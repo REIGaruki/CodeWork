@@ -5,6 +5,7 @@ import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StudentService {
@@ -27,7 +28,8 @@ public class StudentService {
     }
 
     public Student updateStudent(Long id, String name, int age) {
-        if (studentRepository.findById(id).isPresent()) {
+        Optional<Student> optionalStudent = studentRepository.findById(id);
+        if (optionalStudent.isPresent()) {
             Student student = studentRepository.findById(id).get();
             student.setAge(age);
             student.setName(name);
@@ -39,7 +41,8 @@ public class StudentService {
     }
 
     public Student deleteStudent(Long id) {
-        if (studentRepository.findById(id).isPresent()) {
+        Optional<Student> optionalStudent = studentRepository.findById(id);
+        if (optionalStudent.isPresent()) {
             Student student = studentRepository.findById(id).get();
             studentRepository.deleteById(id);
             return student;
