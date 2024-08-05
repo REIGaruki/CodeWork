@@ -31,7 +31,7 @@ public class FacultyService {
     public Faculty updateFaculty(Long id, String name, String color) {
         Optional<Faculty> optionalFaculty= facultyRepository.findById(id);
         if (optionalFaculty.isPresent()) {
-            Faculty faculty = facultyRepository.findById(id).get();
+            Faculty faculty = optionalFaculty.get();
             faculty.setColor(color);
             faculty.setName(name);
             facultyRepository.save(faculty);
@@ -44,7 +44,7 @@ public class FacultyService {
     public Faculty deleteFaculty(Long id) {
         Optional<Faculty> optionalFaculty = facultyRepository.findById(id);
         if (optionalFaculty.isPresent()) {
-            Faculty faculty = facultyRepository.findById(id).get();
+            Faculty faculty = optionalFaculty.get();
             facultyRepository.deleteById(id);
             return faculty;
         } else {

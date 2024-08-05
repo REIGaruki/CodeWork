@@ -30,7 +30,7 @@ public class StudentService {
     public Student updateStudent(Long id, String name, int age) {
         Optional<Student> optionalStudent = studentRepository.findById(id);
         if (optionalStudent.isPresent()) {
-            Student student = studentRepository.findById(id).get();
+            Student student = optionalStudent.get();
             student.setAge(age);
             student.setName(name);
             studentRepository.save(student);
@@ -43,7 +43,7 @@ public class StudentService {
     public Student deleteStudent(Long id) {
         Optional<Student> optionalStudent = studentRepository.findById(id);
         if (optionalStudent.isPresent()) {
-            Student student = studentRepository.findById(id).get();
+            Student student = optionalStudent.get();
             studentRepository.deleteById(id);
             return student;
         } else {
