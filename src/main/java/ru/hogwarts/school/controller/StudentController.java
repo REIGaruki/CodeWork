@@ -31,12 +31,21 @@ public class StudentController {
     public List<Student> getStudents() {
         return studentService.getAllStudents();
     }
+
     @GetMapping
     public ResponseEntity<List<Student>> getStudentsByAge(@RequestParam int age) {
         if (age <= 0) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         return ResponseEntity.ok(studentService.getStudentsByAge(age));
+    }
+
+    @GetMapping("age")
+    public ResponseEntity<List<Student>> getStudentsByAgeInterval(@RequestParam int min, @RequestParam int max) {
+        if (min > max) {
+            return ResponseEntity.ok(studentService.getStudentsByAgeInterval(max, min));
+        }
+        return ResponseEntity.ok(studentService.getStudentsByAgeInterval(min, max));
     }
 
     @PutMapping("{id}")

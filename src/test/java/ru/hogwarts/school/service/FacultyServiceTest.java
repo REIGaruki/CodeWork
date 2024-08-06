@@ -102,7 +102,8 @@ class FacultyServiceTest {
                 new Faculty("Name2", "Green"),
                 new Faculty("Name3", "Green")
         ));
-        when(repositoryMock.findAll()).thenReturn(faculties.values().stream().toList());
+        when(repositoryMock.findFacultiesByColor("Green"))
+                .thenReturn(faculties.values().stream().filter(value -> value.getColor().equals("Green")).toList());
         List<Faculty> actual = service.getFacultiesByColor("Green");
         Assertions.assertEquals(expected, actual);
     }
@@ -117,6 +118,27 @@ class FacultyServiceTest {
                 () -> service.deleteFaculty(6L));
         Assertions.assertThrows(NullPointerException.class,
                 () -> service.updateFaculty(6L, "Name6", "Blue"));
+    }
+
+    @Test
+    @DisplayName("Should get all faculties of same color or name")
+    void getNameOrColor() {
+        List<Faculty> expected = new ArrayList<>(Arrays.asList(
+                new Faculty("Name1", "Green"),
+                new Faculty("Name2", "Green"),
+                new Faculty("Name3", "Green")
+        ));
+        when(repositoryMock.findFacultiesByNameOrColorIgnoreCase(null,"Green"))
+                .thenReturn(faculties.values().stream().filter(value -> value.getColor().equals("Green")).toList());
+        List<Faculty> actual = service.getFacultiesByColorOrName(null,"Green");
+        Assertions.assertEquals(expected, actual);
+        expected = new ArrayList<>(List.of(
+                new Faculty("Name1", "Green")
+        ));
+        when(repositoryMock.findFacultiesByNameOrColorIgnoreCase("Name1",null))
+                .thenReturn(faculties.values().stream().filter(value -> value.getName().equals("Name1")).toList());
+        actual = service.getFacultiesByColorOrName("Name1",null);
+        Assertions.assertEquals(expected, actual);
     }
 
 }

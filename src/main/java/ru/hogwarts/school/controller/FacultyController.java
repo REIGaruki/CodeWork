@@ -36,12 +36,23 @@ public class FacultyController {
     public List<Faculty> getFaculties() {
         return facultyService.getAllSFaculties();
     }
+
     @GetMapping
     public ResponseEntity<List<Faculty>> getFacultiesByColor(@RequestParam String color) {
         if (color == null || color.isBlank()) {
             return ResponseEntity.ok(List.of());
         }
         return ResponseEntity.ok(facultyService.getFacultiesByColor(color));
+    }
+
+    @GetMapping("find")
+    public ResponseEntity<List<Faculty>> getFacultiesByColorOrName(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String color) {
+        if ((color == null || color.isBlank())&&(name == null || name.isBlank())) {
+            return ResponseEntity.ok(List.of());
+        }
+        return ResponseEntity.ok(facultyService.getFacultiesByColorOrName(name, color));
     }
 
     @PutMapping("{id}")

@@ -100,8 +100,23 @@ class StudentServiceTest {
                 new Student("Name2", 11),
                 new Student("Name3", 11)
         ));
-        when(repositoryMock.findAll()).thenReturn(students.values().stream().toList());
+        when(repositoryMock.findStudentsByAge(11))
+                .thenReturn(students.values().stream().filter(value -> value.getAge() == 11).toList());
         List<Student> actual = service.getStudentsByAge(11);
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    @DisplayName("Should get all students of age interval")
+    void getStudentsByAgeInterval() {
+        List<Student> expected = new ArrayList<Student>(Arrays.asList(
+                new Student("Name1", 11),
+                new Student("Name2", 11),
+                new Student("Name3", 11)
+        ));
+        when(repositoryMock.findStudentsByAgeBetween(10, 11))
+                .thenReturn(students.values().stream().filter(value -> value.getAge() == 11).toList());
+        List<Student> actual = service.getStudentsByAgeInterval(10, 11);
         Assertions.assertEquals(expected, actual);
     }
 
