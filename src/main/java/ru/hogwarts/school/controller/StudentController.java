@@ -1,8 +1,10 @@
 package ru.hogwarts.school.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
 
@@ -11,7 +13,8 @@ import java.util.List;
 @RestController
 @RequestMapping("students")
 public class StudentController {
-    private final StudentService studentService = new StudentService();
+    @Autowired
+    private StudentService studentService;
 
     @GetMapping("{id}")
     public ResponseEntity<Student> getStudent(@PathVariable Long id) {
@@ -21,12 +24,23 @@ public class StudentController {
         }
         return ResponseEntity.ok(student);
     }
+    @GetMapping("all")
+    public List<Student> getStudents() {
+        return studentService.getAllStudents();
+    }
     @GetMapping
     public ResponseEntity<List<Student>> getStudentsByAge(@RequestParam int age) {
         if (age <= 0) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         return ResponseEntity.ok(studentService.getStudentsByAge(age));
+    }
+    @GetMapping("age")
+    public ResponseEntity<List<Student>> getStudentsByAgeInterval(@RequestParam int min, @RequestParam int max) {
+        if (min > max) {
+            return ResponseEntity.ok(studentService.getStudentsByAgeInterval(max, min));
+        }
+        return ResponseEntity.ok(studentService.getStudentsByAgeInterval(min, max));
     }
     @PutMapping("{id}")
     public ResponseEntity<Student> putStudent(@PathVariable Long id, @RequestParam String name, @RequestParam int age) {
@@ -47,5 +61,10 @@ public class StudentController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         return ResponseEntity.ok(student);
+    }
+    @GetMapping("facultyOf/{id}")
+    public ResponseEntity<Faculty> getFaculty(@PathVariable Long id) {
+        Faculty faculty = studentService.readStudent(id).getFaculty();
+        return ResponseEntity.ok(faculty);
     }
 }
