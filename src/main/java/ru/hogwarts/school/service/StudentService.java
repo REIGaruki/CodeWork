@@ -2,47 +2,56 @@ package ru.hogwarts.school.service;
 
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repository.StudentRepository;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class StudentService {
-    private final Map<Long, Student> students = new HashMap<>();
-    private Long idCounter = 0L;
+    private final StudentRepository studentRepository;
+
+    public StudentService(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
+    }
+
     public Student createStudent(String name, int age) {
-        Student student = new Student(++idCounter, name, age);
-        students.put(student.getId(), student);
-        return student;
+        return studentRepository.save(new Student(name, age));
     }
+
     public Student readStudent(Long id) {
-        if (!students.containsKey(id)) {
-            return null;
-        }
-        return students.get(id);
+        return studentRepository.findById(id).orElse(null);
     }
+
     public List<Student> getAllStudents() {
-        return students.values().stream().toList();
+        return studentRepository.findAll().stream().toList();
     }
+
     public Student updateStudent(Long id, String name, int age) {
-        if (!students.containsKey(id)) {
+        Optional<Student> optionalStudent = studentRepository.findById(id);
+        if (optionalStudent.isPresent()) {
+            Student student = optionalStudent.get();
+            student.setAge(age);
+            student.setName(name);
+            studentRepository.save(student);
+            return student;
+        } else {
             return null;
         }
-        students.get(id).setName(name);
-        students.get(id).setAge(age);
-        return students.get(id);
     }
+
     public Student deleteStudent(Long id) {
-        if (!students.containsKey(id)) {
+        Optional<Student> optionalStudent = studentRepository.findById(id);
+        if (optionalStudent.isPresent()) {
+            Student student = optionalStudent.get();
+            studentRepository.deleteById(id);
+            return student;
+        } else {
             return null;
         }
-        Student student = students.get(id);
-        students.remove(id);
-        return student;
     }
 
     public List<Student> getStudentsByAge(int age) {
-        return students.values().stream().filter(value -> value.getAge() == age).toList();
+        return studentRepository.findAll().stream().filter(value -> value.getAge() == age).toList();
     }
 }
