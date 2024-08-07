@@ -64,4 +64,8 @@ public class Student {
                 ", age=" + age +
                 '}';
     }
+
+    public Faculty getFaculty() {
+        return faculty;
+    }
 }
