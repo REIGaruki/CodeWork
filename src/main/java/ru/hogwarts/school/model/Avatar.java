@@ -1,5 +1,6 @@
 package ru.hogwarts.school.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Arrays;
@@ -15,8 +16,7 @@ public class Avatar {
     private String mediaType;
     private byte[] data;
     @OneToOne
-    private
-    Student student;
+    private Student student;
 
     public Avatar() {
     }
@@ -89,6 +89,7 @@ public class Avatar {
         return id;
     }
 
+    @JsonIgnore
     public Student getStudent() {
         return student;
     }
@@ -96,6 +97,5 @@ public class Avatar {
     public void setStudent(Student student) {
         this.student = student;
     }
-
 
 }

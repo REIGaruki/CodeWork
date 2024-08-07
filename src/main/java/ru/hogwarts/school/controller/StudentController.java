@@ -78,4 +78,10 @@ public class StudentController {
         return ResponseEntity.ok(faculty);
     }
 
+    @GetMapping("faculty/{id}")
+    public ResponseEntity<List<Student>> getStudentsByAgeInterval(@PathVariable Long id) {
+        return ResponseEntity.ok(studentService.getStudentsByFacultyId(id));
+
+    }
+
 }
