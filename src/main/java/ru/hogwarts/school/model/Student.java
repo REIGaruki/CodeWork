@@ -24,6 +24,11 @@ public class Student {
 
     }
 
+    @JsonIgnore
+    public Faculty getFaculty() {
+        return faculty;
+    }
+
     public Long getId() {
         return id;
     }
