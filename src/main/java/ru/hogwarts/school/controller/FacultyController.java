@@ -20,8 +20,8 @@ public class FacultyController {
     }
 
     @PostMapping
-    public Faculty postFaculty(@RequestParam String name, @RequestParam String color) {
-        return facultyService.createFaculty(name, color);
+    public ResponseEntity<Faculty> postFaculty(@RequestParam String name, @RequestParam String color) {
+        return ResponseEntity.ok(facultyService.createFaculty(name, color));
     }
 
     @GetMapping("{id}")
