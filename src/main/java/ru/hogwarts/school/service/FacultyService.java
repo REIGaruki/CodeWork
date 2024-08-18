@@ -5,6 +5,7 @@ import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.repository.FacultyRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FacultyService {
@@ -27,26 +28,31 @@ public class FacultyService {
     }
 
     public Faculty updateFaculty(Long id, String name, String color) {
-        Faculty faculty;
-        try {
-            faculty = readFaculty(id);
-        } catch (NullPointerException e) {
+        Optional<Faculty> optionalFaculty= facultyRepository.findById(id);
+        if (optionalFaculty.isPresent()) {
+            Faculty faculty = optionalFaculty.get();
+            faculty.setColor(color);
+            faculty.setName(name);
+            facultyRepository.save(faculty);
+            return faculty;
+        } else {
             return null;
         }
-        faculty.setName(name);
-        faculty.setColor(color);
-        return facultyRepository.save(faculty);
     }
 
     public Faculty deleteFaculty(Long id) {
-        Faculty faculty;
-        try {
-            faculty = readFaculty(id);
-        } catch (NullPointerException e) {
+        Optional<Faculty> optionalFaculty = facultyRepository.findById(id);
+        if (optionalFaculty.isPresent()) {
+            Faculty faculty = optionalFaculty.get();
+            facultyRepository.deleteById(id);
+            return faculty;
+        } else {
             return null;
         }
-        facultyRepository.deleteById(id);
-        return faculty;
+    }
+
+    public List<Faculty> getFacultiesByColorOrName(String name, String color) {
+        return facultyRepository.findFacultiesByNameOrColorIgnoreCase(name, color);
     }
 
     public List<Faculty> getFacultiesByColor(String color) {
@@ -56,4 +62,5 @@ public class FacultyService {
     public List<Faculty> getFacultiesByColorOrName(String name, String color) {
         return facultyRepository.findFacultiesByNameOrColorIgnoreCase(name, color);
     }
+
 }

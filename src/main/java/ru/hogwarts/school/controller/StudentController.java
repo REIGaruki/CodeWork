@@ -1,6 +1,5 @@
 package ru.hogwarts.school.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,8 +12,12 @@ import java.util.List;
 @RestController
 @RequestMapping("students")
 public class StudentController {
-    @Autowired
-    private StudentService studentService;
+
+    private final StudentService studentService;
+
+    public StudentController(StudentService studentService) {
+        this.studentService = studentService;
+    }
 
     @GetMapping("{id}")
     public ResponseEntity<Student> getStudent(@PathVariable Long id) {
@@ -24,10 +27,12 @@ public class StudentController {
         }
         return ResponseEntity.ok(student);
     }
+
     @GetMapping("all")
     public List<Student> getStudents() {
         return studentService.getAllStudents();
     }
+
     @GetMapping
     public ResponseEntity<List<Student>> getStudentsByAge(@RequestParam int age) {
         if (age <= 0) {
@@ -35,6 +40,7 @@ public class StudentController {
         }
         return ResponseEntity.ok(studentService.getStudentsByAge(age));
     }
+
     @GetMapping("age")
     public ResponseEntity<List<Student>> getStudentsByAgeInterval(@RequestParam int min, @RequestParam int max) {
         if (min > max) {
@@ -42,6 +48,7 @@ public class StudentController {
         }
         return ResponseEntity.ok(studentService.getStudentsByAgeInterval(min, max));
     }
+
     @PutMapping("{id}")
     public ResponseEntity<Student> putStudent(@PathVariable Long id, @RequestParam String name, @RequestParam int age) {
         Student student = studentService.updateStudent(id, name, age);
@@ -50,10 +57,12 @@ public class StudentController {
         }
         return ResponseEntity.ok(student);
     }
+
     @PostMapping
     public ResponseEntity<Student> postStudent(@RequestParam String name, @RequestParam int age) {
         return ResponseEntity.ok(studentService.createStudent(name, age));
     }
+
     @DeleteMapping("{id}")
     public ResponseEntity<Student> deleteStudent(@PathVariable Long id) {
         Student student = studentService.deleteStudent(id);
@@ -62,9 +71,17 @@ public class StudentController {
         }
         return ResponseEntity.ok(student);
     }
+
     @GetMapping("facultyOf/{id}")
     public ResponseEntity<Faculty> getFaculty(@PathVariable Long id) {
         Faculty faculty = studentService.readStudent(id).getFaculty();
         return ResponseEntity.ok(faculty);
     }
+
+    @GetMapping("faculty/{id}")
+    public ResponseEntity<List<Student>> getStudentsByAgeInterval(@PathVariable Long id) {
+        return ResponseEntity.ok(studentService.getStudentsByFacultyId(id));
+
+    }
+
 }

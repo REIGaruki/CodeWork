@@ -1,6 +1,5 @@
 package ru.hogwarts.school.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,12 +12,18 @@ import java.util.List;
 @RestController
 @RequestMapping("faculties")
 public class FacultyController {
-    @Autowired
-    private FacultyService facultyService;
+
+    private final FacultyService facultyService;
+
+    public FacultyController(FacultyService facultyService) {
+        this.facultyService = facultyService;
+    }
+
     @PostMapping
     public Faculty postFaculty(@RequestParam String name, @RequestParam String color) {
         return facultyService.createFaculty(name, color);
     }
+
     @GetMapping("{id}")
     public ResponseEntity<Faculty> getFaculty(@PathVariable Long id) {
         Faculty faculty = facultyService.readFaculty(id);
@@ -27,10 +32,12 @@ public class FacultyController {
         }
         return ResponseEntity.ok(faculty);
     }
+
     @GetMapping("all")
     public List<Faculty> getFaculties() {
         return facultyService.getAllSFaculties();
     }
+
     @GetMapping
     public ResponseEntity<List<Faculty>> getFacultiesByColor(@RequestParam String color) {
         if (color == null || color.isBlank()) {
@@ -38,6 +45,7 @@ public class FacultyController {
         }
         return ResponseEntity.ok(facultyService.getFacultiesByColor(color));
     }
+
     @GetMapping("find")
     public ResponseEntity<List<Faculty>> getFacultiesByColorOrName(
             @RequestParam(required = false) String name,
@@ -47,6 +55,7 @@ public class FacultyController {
         }
         return ResponseEntity.ok(facultyService.getFacultiesByColorOrName(name, color));
     }
+
     @PutMapping("{id}")
     public ResponseEntity<Faculty> putFaculty(@PathVariable Long id, @RequestParam String name, @RequestParam String color) {
         Faculty faculty = facultyService.updateFaculty(id, name, color);
@@ -55,6 +64,7 @@ public class FacultyController {
         }
         return ResponseEntity.ok(faculty);
     }
+
     @DeleteMapping("{id}")
     public ResponseEntity<Faculty> deleteFaculty(@PathVariable Long id) {
         Faculty faculty = facultyService.deleteFaculty(id);
@@ -63,8 +73,10 @@ public class FacultyController {
         }
         return ResponseEntity.ok(faculty);
     }
+
     @GetMapping("students_of/{id}")
     public ResponseEntity<List<Student>> getStudentsByFacultyID(@PathVariable Long id) {
         return ResponseEntity.ok(facultyService.readFaculty(id).getStudents());
     }
+
 }

@@ -70,4 +70,10 @@ public class Student {
                 ", age=" + age +
                 '}';
     }
+
+    @JsonIgnore
+    public Faculty getFaculty() {
+        return faculty;
+    }
+
 }

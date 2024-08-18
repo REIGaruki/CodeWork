@@ -5,6 +5,7 @@ import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StudentService {
@@ -27,32 +28,39 @@ public class StudentService {
     }
 
     public Student updateStudent(Long id, String name, int age) {
-        Student student;
-        try {
-            student = readStudent(id);
-        } catch (NullPointerException e) {
+        Optional<Student> optionalStudent = studentRepository.findById(id);
+        if (optionalStudent.isPresent()) {
+            Student student = optionalStudent.get();
+            student.setAge(age);
+            student.setName(name);
+            studentRepository.save(student);
+            return student;
+        } else {
             return null;
         }
-        student.setName(name);
-        student.setAge(age);
-        return studentRepository.save(student);
     }
 
     public Student deleteStudent(Long id) {
-        Student student;
-        try {
-            student = readStudent(id);
-        } catch (NullPointerException e) {
+        Optional<Student> optionalStudent = studentRepository.findById(id);
+        if (optionalStudent.isPresent()) {
+            Student student = optionalStudent.get();
+            studentRepository.deleteById(id);
+            return student;
+        } else {
             return null;
         }
-        studentRepository.deleteById(id);
-        return student;
     }
 
     public List<Student> getStudentsByAge(int age) {
         return studentRepository.findStudentsByAge(age);
     }
+
     public List<Student> getStudentsByAgeInterval(int min, int max) {
         return studentRepository.findStudentsByAgeBetween(min, max);
     }
+
+    public List<Student> getStudentsByFacultyId(Long facultyId) {
+        return studentRepository.findStudentsByFacultyId(facultyId);
+    }
+
 }

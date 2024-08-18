@@ -15,12 +15,14 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class FacultyServiceTest {
 
-
     @Mock
     private FacultyRepository repositoryMock;
+
     private final Map<Long, Faculty> faculties = new HashMap<>();
+
     @InjectMocks
     FacultyService service;
+
     @BeforeEach
     void init() {
         service = new FacultyService(repositoryMock);
@@ -30,6 +32,7 @@ class FacultyServiceTest {
         faculties.put(4L, new Faculty("Name4", "Red"));
         faculties.put(5L, new Faculty("Name5", "Red"));
     }
+
     @AfterEach
     void post() {
         faculties.remove(1L);
@@ -39,6 +42,7 @@ class FacultyServiceTest {
         faculties.remove(5L);
         faculties.remove(6L);
     }
+
     @Test
     @DisplayName("Should get list of all students")
     void getAllStudents() {
@@ -103,6 +107,19 @@ class FacultyServiceTest {
         List<Faculty> actual = service.getFacultiesByColor("Green");
         Assertions.assertEquals(expected, actual);
     }
+
+    @Test
+    @DisplayName("Should throw NPE if such id not exist")
+    void getNotFound() {
+        when(repositoryMock.findById(6L)).thenReturn(null);
+        Assertions.assertThrows(NullPointerException.class,
+                () -> service.readFaculty(6L));
+        Assertions.assertThrows(NullPointerException.class,
+                () -> service.deleteFaculty(6L));
+        Assertions.assertThrows(NullPointerException.class,
+                () -> service.updateFaculty(6L, "Name6", "Blue"));
+    }
+
     @Test
     @DisplayName("Should get all faculties of same color or name")
     void getNameOrColor() {
@@ -115,7 +132,7 @@ class FacultyServiceTest {
                 .thenReturn(faculties.values().stream().filter(value -> value.getColor().equals("Green")).toList());
         List<Faculty> actual = service.getFacultiesByColorOrName(null,"Green");
         Assertions.assertEquals(expected, actual);
-        expected = new ArrayList<>(Arrays.asList(
+        expected = new ArrayList<>(List.of(
                 new Faculty("Name1", "Green")
         ));
         when(repositoryMock.findFacultiesByNameOrColorIgnoreCase("Name1",null))
@@ -123,12 +140,5 @@ class FacultyServiceTest {
         actual = service.getFacultiesByColorOrName("Name1",null);
         Assertions.assertEquals(expected, actual);
     }
-    @Test
-    @DisplayName("Should return null if such id not exist")
-    void getNotFound() {
-        when(repositoryMock.findById(6L)).thenReturn(null);
-        Assertions.assertThrows(NullPointerException.class, () -> service.readFaculty(6L));
-        Assertions.assertNull(service.deleteFaculty(6L));
-        Assertions.assertNull(service.updateFaculty(6L, "Name6", "Blue"));
-    }
+
 }

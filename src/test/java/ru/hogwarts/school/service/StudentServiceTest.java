@@ -13,10 +13,14 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class StudentServiceTest {
+
     @Mock
     private StudentRepository repositoryMock;
+
     private final Map<Long, Student> students = new HashMap<>();
+
     StudentService service;
+
     @BeforeEach
     void init() {
         service = new StudentService(repositoryMock);
@@ -26,6 +30,7 @@ class StudentServiceTest {
         students.put(4L, new Student("Name4", 12));
         students.put(5L, new Student("Name5", 12));
     }
+
     @AfterEach
     void post() {
         students.remove(1L);
@@ -35,6 +40,7 @@ class StudentServiceTest {
         students.remove(5L);
         students.remove(6L);
     }
+
     @Test
     @DisplayName("Should get list of all students")
     void getAllStudents() {
@@ -99,6 +105,7 @@ class StudentServiceTest {
         List<Student> actual = service.getStudentsByAge(11);
         Assertions.assertEquals(expected, actual);
     }
+
     @Test
     @DisplayName("Should get all students of age interval")
     void getStudentsByAgeInterval() {
@@ -112,12 +119,17 @@ class StudentServiceTest {
         List<Student> actual = service.getStudentsByAgeInterval(10, 11);
         Assertions.assertEquals(expected, actual);
     }
+
     @Test
-    @DisplayName("Should return null if such id not exist")
+    @DisplayName("Should throw NPE if such id not exist")
     void getNotFound() {
         when(repositoryMock.findById(6L)).thenReturn(null);
-        Assertions.assertThrows(NullPointerException.class, () -> service.readStudent(6L));
-        Assertions.assertNull(service.deleteStudent(6L));
-        Assertions.assertNull(service.updateStudent(6L, "Name6", 13));
+        Assertions.assertThrows(NullPointerException.class,
+                () -> service.readStudent(6L));
+        Assertions.assertThrows(NullPointerException.class,
+                () -> service.deleteStudent(6L));
+        Assertions.assertThrows(NullPointerException.class,
+                () -> service.updateStudent(6L, "Name6", 13));
     }
+
 }
