@@ -44,6 +44,14 @@ public class Student {
         this.age = age;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setFaculty(Faculty faculty) {
+        this.faculty = faculty;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
