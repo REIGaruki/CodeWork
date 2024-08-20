@@ -41,6 +41,10 @@ public class FacultyControllerTests {
 
     private final String COLOR = "blue";
 
+    private final String NEW_NAME = "tree";
+
+    private final String NEW_COLOR = "blue";
+
 
     @Test
     @DisplayName("should create faculty")
@@ -68,8 +72,8 @@ public class FacultyControllerTests {
         Faculty faculty = new Faculty(NAME, COLOR);
         facultyRepository.save(faculty);
         String url = "http://localhost:" + port + "/faculties/"
-                + faculty.getId() + "?name=" + NAME + "1&color=" + COLOR + '1';
-        Faculty updFaculty = new Faculty(NAME + '1', COLOR + '1');
+                + faculty.getId() + "?name=" + NEW_NAME + "&color=" + NEW_COLOR;
+        Faculty updFaculty = new Faculty(NEW_NAME, NEW_COLOR);
         HttpEntity<Faculty> entity = new HttpEntity<>(updFaculty);
         ResponseEntity<Faculty> responseEntity = testRestTemplate.exchange(
                 url,
