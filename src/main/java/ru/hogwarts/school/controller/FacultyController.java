@@ -48,8 +48,8 @@ public class FacultyController {
 
     @GetMapping("find")
     public ResponseEntity<List<Faculty>> getFacultiesByColorOrName(
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) String color) {
+            @RequestParam(required = false, defaultValue = "") String name,
+            @RequestParam(required = false, defaultValue = "") String color) {
         if ((color == null || color.isBlank())&&(name == null || name.isBlank())) {
             return ResponseEntity.ok(List.of());
         }
@@ -76,7 +76,7 @@ public class FacultyController {
 
     @GetMapping("students_of/{id}")
     public ResponseEntity<List<Student>> getStudentsByFacultyID(@PathVariable Long id) {
-        return ResponseEntity.ok(facultyService.readFaculty(id).getStudents());
+        return ResponseEntity.ok(facultyService.readStudents(id));
     }
 
 }

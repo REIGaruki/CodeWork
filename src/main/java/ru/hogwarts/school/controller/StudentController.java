@@ -74,14 +74,8 @@ public class StudentController {
 
     @GetMapping("facultyOf/{id}")
     public ResponseEntity<Faculty> getFaculty(@PathVariable Long id) {
-        Faculty faculty = studentService.readStudent(id).getFaculty();
+        Faculty faculty = studentService.readFaculty(id);
         return ResponseEntity.ok(faculty);
-    }
-
-    @GetMapping("faculty/{id}")
-    public ResponseEntity<List<Student>> getStudentsByAgeInterval(@PathVariable Long id) {
-        return ResponseEntity.ok(studentService.getStudentsByFacultyId(id));
-
     }
 
 }

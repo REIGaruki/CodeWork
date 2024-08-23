@@ -1,6 +1,7 @@
 package ru.hogwarts.school.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.service.FacultyService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -65,6 +71,83 @@ public class FacultyControllerMvcTests {
                 .andExpect(jsonPath("$.color").value(faculty.getColor()))
                 .andDo(print());
 
+    }
+
+    @Test
+    @DisplayName("Should get all faculties")
+    void getAllTest() throws Exception {
+        List<Faculty> faculties = new ArrayList<>();
+        faculties.add(new Faculty(NAME, COLOR));
+        faculties.add(new Faculty(NEW_NAME, NEW_COLOR));
+        when(facultyService.getAllSFaculties()).thenReturn(faculties);
+        ResultActions perform = mockMvc.perform(get("/faculties/all"));
+        perform.andExpect(jsonPath("$[0].name").value(faculties.get(0).getName()))
+                .andExpect(jsonPath("$[0].color").value(faculties.get(0).getColor()))
+                .andExpect(jsonPath("$[1].name").value(faculties.get(1).getName()))
+                .andExpect(jsonPath("$[1].color").value(faculties.get(1).getColor()))
+                .andDo(print());
+
+    }
+
+    @Test
+    @DisplayName("Should get students of faculty")
+    void getStudentsTest() throws Exception {
+        Long id = 1L;
+        Faculty faculty = new Faculty(NAME, COLOR);
+        faculty.setId(id);
+        List<Student> students = new ArrayList<>();
+        Student student = new Student("NAME", 15);
+        student.setFaculty(faculty);
+        students.add(student);
+        Student newStudent = new Student("NEW_NAME", 6);
+        newStudent.setFaculty(faculty);
+        students.add(newStudent);
+        when(facultyService.readStudents(id)).thenReturn(students);
+        ResultActions perform = mockMvc.perform(get("/faculties/students_of/" + id));
+        perform.andExpect(jsonPath("$[0].name").value(students.get(0).getName()))
+                .andExpect(jsonPath("$[0].age").value(students.get(0).getAge()))
+                .andExpect(jsonPath("$[1].name").value(students.get(1).getName()))
+                .andExpect(jsonPath("$[1].age").value(students.get(1).getAge()))
+                .andDo(print());
+
+    }
+
+    @Test
+    @DisplayName("Should get all faculties with same color")
+    void getByColorTest() throws Exception {
+        List<Faculty> faculties = new ArrayList<>();
+        faculties.add(new Faculty(NAME, COLOR));
+        faculties.add(new Faculty(NEW_NAME, COLOR));
+        when(facultyService.getFacultiesByColor(COLOR)).thenReturn(faculties);
+        ResultActions perform = mockMvc.perform(get("/faculties?color=" + COLOR));
+        perform.andExpect(jsonPath("$[0].name").value(faculties.get(0).getName()))
+                .andExpect(jsonPath("$[0].color").value(faculties.get(0).getColor()))
+                .andExpect(jsonPath("$[1].name").value(faculties.get(1).getName()))
+                .andExpect(jsonPath("$[1].color").value(faculties.get(1).getColor()))
+                .andExpect(jsonPath("$[1].color").value(faculties.get(0).getColor()))
+                .andDo(print());
+
+    }
+
+    @Test
+    @DisplayName("Should get all faculties with same color or name")
+    void getByColorOrNameTest() throws Exception {
+        List<Faculty> facultiesName = new ArrayList<>();
+        List<Faculty> facultiesColor = new ArrayList<>();
+        facultiesColor.add(new Faculty(NAME, COLOR));
+        facultiesName.add(new Faculty(NEW_NAME, NEW_COLOR));
+        when(facultyService.getFacultiesByColorOrName("", COLOR)).
+                thenReturn(facultiesColor);
+        when(facultyService.getFacultiesByColorOrName(NEW_NAME, "")).
+                thenReturn(facultiesName);
+        ResultActions performName = mockMvc.perform(get("/faculties/find?name=" + NEW_NAME));
+        performName.andExpect(jsonPath("$[0].name").value(facultiesName.get(0).getName()))
+                .andExpect(jsonPath("$[0].color").value(facultiesName.get(0).getColor()))
+                .andDo(print());
+        ResultActions performColor = mockMvc.perform(get("/faculties/find?color=" + COLOR));
+        performColor.andExpect(jsonPath("$[0].name").value(facultiesColor.get(0).getName()))
+                .andExpect(jsonPath("$[0].color").value(facultiesColor.get(0).getColor()))
+                .andDo(print());
     }
 
     @Test
