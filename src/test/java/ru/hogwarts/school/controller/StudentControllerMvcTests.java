@@ -114,7 +114,7 @@ public class StudentControllerMvcTests {
     }
 
     @Test
-    @DisplayName("Should get fauculty of student")
+    @DisplayName("Should get faculty of student")
     void getFacultyTest() throws Exception {
         Student student = new Student(NAME, AGE);
         Long studentId = 1L;

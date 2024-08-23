@@ -8,13 +8,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
+import ru.hogwarts.school.repository.StudentRepository;
 import ru.hogwarts.school.service.FacultyService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
@@ -31,6 +37,9 @@ public class FacultyControllerTests {
     private FacultyRepository facultyRepository;
 
     @Autowired
+    private StudentRepository studentRepository;
+
+    @Autowired
     private TestRestTemplate testRestTemplate;
 
     @BeforeEach
@@ -41,9 +50,9 @@ public class FacultyControllerTests {
 
     private final String COLOR = "blue";
 
-    private final String NEW_NAME = "tree";
+    private final String NEW_NAME = "not tree";
 
-    private final String NEW_COLOR = "blue";
+    private final String NEW_COLOR = "not blue";
 
 
     @Test
@@ -136,6 +145,116 @@ public class FacultyControllerTests {
         Assertions.assertNotNull(actual.getId());
         Assertions.assertEquals(actual.getName(), faculty.getName());
         Assertions.assertEquals(actual.getColor(), faculty.getColor());
+    }
+
+    @Test
+    @DisplayName("should find all faculties")
+    void getAllTest() {
+        Faculty faculty = new Faculty(NAME, COLOR);
+        facultyRepository.save(faculty);
+        List<Faculty> faculties = new ArrayList<>();
+        faculties.add(faculty);
+        String url = "http://localhost:" + port + "/faculties/all";
+        HttpEntity<List<Faculty>> entity = new HttpEntity<>(faculties);
+        ResponseEntity<List<Faculty>> responseEntity = testRestTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<List<Faculty>>() {}
+        );
+        Assertions.assertNotNull(responseEntity);
+        Assertions.assertEquals(HttpStatusCode.valueOf(200), responseEntity.getStatusCode());
+        List<Faculty> actual = responseEntity.getBody();
+        Assertions.assertNotNull(actual.get(0));
+        Assertions.assertEquals(actual.get(0).getName(), faculties.get(0).getName());
+        Assertions.assertEquals(actual.get(0).getColor(), faculties.get(0).getColor());
+    }
+
+    @Test
+    @DisplayName("should find faculties by color")
+    void getColorTest() {
+        Faculty faculty = new Faculty(NAME, COLOR);
+        Faculty newFaculty = new Faculty(NEW_NAME, COLOR);
+        facultyRepository.save(faculty);
+        facultyRepository.save(newFaculty);
+        List<Faculty> faculties = new ArrayList<>();
+        faculties.add(faculty);
+        faculties.add(newFaculty);
+        String url = "http://localhost:" + port + "/faculties?color=" + COLOR;
+        HttpEntity<List<Faculty>> entity = new HttpEntity<>(faculties);
+        ResponseEntity<List<Faculty>> responseEntity = testRestTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<List<Faculty>>() {}
+        );
+        Assertions.assertNotNull(responseEntity);
+        Assertions.assertEquals(HttpStatusCode.valueOf(200), responseEntity.getStatusCode());
+        List<Faculty> actual = responseEntity.getBody();
+        Assertions.assertNotNull(actual);
+        Assertions.assertEquals(actual.get(0).getName(), faculties.get(0).getName());
+        Assertions.assertEquals(actual.get(0).getColor(), faculties.get(0).getColor());
+        Assertions.assertEquals(actual.get(1).getName(), faculties.get(1).getName());
+        Assertions.assertEquals(actual.get(0).getColor(), faculties.get(1).getColor());
+    }
+
+    @Test
+    @DisplayName("should find faculties by name and color")
+    void getNameColorTest() {
+        Faculty faculty = new Faculty(NAME, COLOR);
+        Faculty newFaculty = new Faculty(NEW_NAME, NEW_COLOR);
+        facultyRepository.save(faculty);
+        facultyRepository.save(newFaculty);
+        List<Faculty> faculties = new ArrayList<>();
+        faculties.add(faculty);
+        faculties.add(newFaculty);
+        String url = "http://localhost:" + port + "/faculties/find?name=" + NEW_NAME + "&color=" + NEW_COLOR;
+        HttpEntity<List<Faculty>> entity = new HttpEntity<>(faculties);
+        ResponseEntity<List<Faculty>> responseEntity = testRestTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<List<Faculty>>() {}
+        );
+        Assertions.assertNotNull(responseEntity);
+        Assertions.assertEquals(HttpStatusCode.valueOf(200), responseEntity.getStatusCode());
+        List<Faculty> actual = responseEntity.getBody();
+        Assertions.assertNotNull(actual);
+        Assertions.assertEquals(actual.get(0).getName(), faculties.get(1).getName());
+        Assertions.assertEquals(actual.get(0).getColor(), faculties.get(1).getColor());
+        Assertions.assertEquals(actual.size(), 1);
+    }
+
+    @Test
+    @DisplayName("should find student")
+    void getStudentsTest() {
+        Faculty faculty = new Faculty(NAME, COLOR);
+        facultyRepository.save(faculty);
+        List<Student> students = new ArrayList<>();
+        Student student = new Student("NAME", 13);
+        student.setFaculty(faculty);
+        Student newStudent = new Student("NEW_NAME", 15);
+        newStudent.setFaculty(faculty);
+        studentRepository.save(student);
+        studentRepository.save(newStudent);
+        students.add(student);
+        students.add(newStudent);
+        String url = "http://localhost:" + port + "/faculties/students_of/" + faculty.getId();
+        HttpEntity<List<Student>> entity = new HttpEntity<>(students);
+        ResponseEntity<List<Student>> responseEntity = testRestTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<List<Student>>() {}
+        );
+        Assertions.assertNotNull(responseEntity);
+        Assertions.assertEquals(HttpStatusCode.valueOf(200), responseEntity.getStatusCode());
+        List<Student> actual = responseEntity.getBody();
+        Assertions.assertNotNull(actual);
+        Assertions.assertEquals(actual.get(0).getName(), students.get(0).getName());
+        Assertions.assertEquals(actual.get(0).getAge(), students.get(0).getAge());
+        Assertions.assertEquals(actual.get(1).getName(), students.get(1).getName());
+        Assertions.assertEquals(actual.get(1).getAge(), students.get(1).getAge());
     }
 
 }

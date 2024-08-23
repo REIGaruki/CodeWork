@@ -8,13 +8,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 import ru.hogwarts.school.service.StudentService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
@@ -32,6 +38,9 @@ public class StudentControllerTests {
 
     @Autowired
     private TestRestTemplate testRestTemplate;
+
+    @Autowired
+    private FacultyRepository facultyRepository;
 
     @BeforeEach
     void clearDatabase() {
@@ -136,6 +145,114 @@ public class StudentControllerTests {
         Assertions.assertNotNull(actual.getId());
         Assertions.assertEquals(actual.getName(), student.getName());
         Assertions.assertEquals(actual.getAge(), student.getAge());
+    }
+
+    @Test
+    @DisplayName("should find all students")
+    void getAllTest() {
+        Student studentA = new Student(NAME, AGE);
+        Student studentB = new Student(NEW_NAME, NEW_AGE);
+        studentRepository.save(studentA);
+        studentRepository.save(studentB);
+        List<Student> students = new ArrayList<>();
+        students.add(studentA);
+        students.add(studentB);
+        String url = "http://localhost:" + port + "/students/all";
+        HttpEntity<List<Student>> entity = new HttpEntity<>(students);
+        ResponseEntity<List<Student>> responseEntity = testRestTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<List<Student>>() {}
+        );
+        Assertions.assertNotNull(responseEntity);
+        Assertions.assertEquals(HttpStatusCode.valueOf(200), responseEntity.getStatusCode());
+        List<Student> actual = responseEntity.getBody();
+        Assertions.assertNotNull(actual.get(0).getId());
+        Assertions.assertEquals(actual.get(0).getName(), studentA.getName());
+        Assertions.assertEquals(actual.get(0).getAge(), studentA.getAge());
+        Assertions.assertNotNull(actual.get(1).getId());
+        Assertions.assertEquals(actual.get(1).getName(), studentB.getName());
+        Assertions.assertEquals(actual.get(1).getAge(), studentB.getAge());
+    }
+
+    @Test
+    @DisplayName("should find all students with same age")
+    void getByAgeTest() {
+        Student studentA = new Student(NAME, AGE);
+        Student studentB = new Student(NEW_NAME, NEW_AGE);
+        studentRepository.save(studentA);
+        studentRepository.save(studentB);
+        List<Student> students = new ArrayList<>();
+        students.add(studentA);
+        students.add(studentB);
+        String url = "http://localhost:" + port + "//students?age=" + AGE;
+        HttpEntity<List<Student>> entity = new HttpEntity<>(students);
+        ResponseEntity<List<Student>> responseEntity = testRestTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<List<Student>>() {}
+        );
+        Assertions.assertNotNull(responseEntity);
+        Assertions.assertEquals(HttpStatusCode.valueOf(200), responseEntity.getStatusCode());
+        List<Student> actual = responseEntity.getBody();
+        Assertions.assertNotNull(actual.get(0).getId());
+        Assertions.assertEquals(actual.get(0).getName(), studentA.getName());
+        Assertions.assertEquals(actual.get(0).getAge(), studentA.getAge());
+        Assertions.assertEquals(actual.size(),1);
+    }
+
+    @Test
+    @DisplayName("should find all students with age of interval")
+    void getByAgeIntervalTest() {
+        Student studentA = new Student(NAME, AGE);
+        Student studentB = new Student(NEW_NAME, NEW_AGE);
+        studentRepository.save(studentA);
+        studentRepository.save(studentB);
+        List<Student> students = new ArrayList<>();
+        students.add(studentA);
+        students.add(studentB);
+        int minAge = AGE + 1;
+        String url = "http://localhost:" + port + "//students/age?min=" + minAge + "&max=" + NEW_AGE;
+        HttpEntity<List<Student>> entity = new HttpEntity<>(students);
+        ResponseEntity<List<Student>> responseEntity = testRestTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<List<Student>>() {}
+        );
+        Assertions.assertNotNull(responseEntity);
+        Assertions.assertEquals(HttpStatusCode.valueOf(200), responseEntity.getStatusCode());
+        List<Student> actual = responseEntity.getBody();
+        Assertions.assertNotNull(actual.get(0).getId());
+        Assertions.assertEquals(actual.get(0).getName(), studentB.getName());
+        Assertions.assertEquals(actual.get(0).getAge(), studentB.getAge());
+        Assertions.assertEquals(actual.size(),1);
+    }
+
+    @Test
+    @DisplayName("should find student's faculty")
+    void getFacultyTest() {
+        Faculty faculty = new Faculty("NAME", "COLOR");
+        facultyRepository.save(faculty);
+        Student student = new Student(NAME, AGE);
+        student.setFaculty(faculty);
+        studentRepository.save(student);
+        String url = "http://localhost:" + port + "/students/facultyOf/" + student.getId();
+        HttpEntity<Faculty> entity = new HttpEntity<>(faculty);
+        ResponseEntity<Faculty> responseEntity = testRestTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                Faculty.class
+        );
+        Assertions.assertNotNull(responseEntity);
+        Assertions.assertEquals(HttpStatusCode.valueOf(200), responseEntity.getStatusCode());
+        Faculty actual = responseEntity.getBody();
+        Assertions.assertNotNull(actual.getId());
+        Assertions.assertEquals(actual.getName(), faculty.getName());
+        Assertions.assertEquals(actual.getColor(), faculty.getColor());
     }
 
 }
