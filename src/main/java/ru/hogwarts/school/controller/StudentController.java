@@ -78,4 +78,19 @@ public class StudentController {
         return ResponseEntity.ok(faculty);
     }
 
+    @GetMapping("count")
+    public Long getStudentsCount() {
+        return studentService.getStudentsCount();
+    }
+
+    @GetMapping("avg-age")
+    public int getStudentsAverageAge() {
+        return studentService.getStudentsAverageAge();
+    }
+
+    @GetMapping("last/{amount}")
+    public List<Student> getLastOfAmount(@PathVariable Long amount) {
+        return studentService.getLastOfAmount(amount);
+    }
+
 }
