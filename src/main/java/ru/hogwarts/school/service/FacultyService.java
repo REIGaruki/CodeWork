@@ -28,6 +28,10 @@ public class FacultyService {
         return facultyRepository.findById(id).orElse(null);
     }
 
+    public List<Student> readStudents(Long id) {
+        return readFaculty(id).getStudents();
+    }
+
     public Faculty updateFaculty(Long id, String name, String color) {
         Optional<Faculty> optionalFaculty= facultyRepository.findById(id);
         if (optionalFaculty.isPresent()) {
@@ -58,6 +62,10 @@ public class FacultyService {
 
     public List<Faculty> getFacultiesByColor(String color) {
         return facultyRepository.findFacultiesByColor(color);
+    }
+
+    public List<Faculty> getFacultiesByColorOrName(String name, String color) {
+        return facultyRepository.findFacultiesByNameOrColorIgnoreCase(name, color);
     }
 
 }

@@ -1,5 +1,6 @@
 package ru.hogwarts.school.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Objects;
@@ -23,6 +24,11 @@ public class Student {
 
     }
 
+    @JsonIgnore
+    public Faculty getFaculty() {
+        return faculty;
+    }
+
     public Long getId() {
         return id;
     }
@@ -41,6 +47,14 @@ public class Student {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setFaculty(Faculty faculty) {
+        this.faculty = faculty;
     }
 
     @Override
@@ -64,4 +78,10 @@ public class Student {
                 ", age=" + age +
                 '}';
     }
+
+    @JsonIgnore
+    public Faculty getFaculty() {
+        return faculty;
+    }
+
 }

@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.FacultyService;
 
 import java.util.List;
@@ -19,8 +20,8 @@ public class FacultyController {
     }
 
     @PostMapping
-    public Faculty postFaculty(@RequestParam String name, @RequestParam String color) {
-        return facultyService.createFaculty(name, color);
+    public ResponseEntity<Faculty> postFaculty(@RequestParam String name, @RequestParam String color) {
+        return ResponseEntity.ok(facultyService.createFaculty(name, color));
     }
 
     @GetMapping("{id}")
@@ -47,8 +48,8 @@ public class FacultyController {
 
     @GetMapping("find")
     public ResponseEntity<List<Faculty>> getFacultiesByColorOrName(
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) String color) {
+            @RequestParam(required = false, defaultValue = "") String name,
+            @RequestParam(required = false, defaultValue = "") String color) {
         if ((color == null || color.isBlank())&&(name == null || name.isBlank())) {
             return ResponseEntity.ok(List.of());
         }
@@ -71,6 +72,11 @@ public class FacultyController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         return ResponseEntity.ok(faculty);
+    }
+
+    @GetMapping("students_of/{id}")
+    public ResponseEntity<List<Student>> getStudentsByFacultyID(@PathVariable Long id) {
+        return ResponseEntity.ok(facultyService.readStudents(id));
     }
 
 }
