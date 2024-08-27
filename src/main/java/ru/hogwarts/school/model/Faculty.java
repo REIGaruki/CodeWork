@@ -58,6 +58,14 @@ public class Faculty {
         return students;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setStudents(List<Student> students) {
+        this.students = students;
+    }
+
     @Override
     public String toString() {
         return "Faculty{" +
