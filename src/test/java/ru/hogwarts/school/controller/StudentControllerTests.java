@@ -255,4 +255,84 @@ public class StudentControllerTests {
         Assertions.assertEquals(actual.getColor(), faculty.getColor());
     }
 
+    @Test
+    @DisplayName("Should get quantity of students")
+    void getStudentsCount() {
+        Student studentA = new Student(NAME, AGE);
+        Student studentB = new Student(NEW_NAME, NEW_AGE);
+        studentRepository.save(studentA);
+        studentRepository.save(studentB);
+        List<Student> students = new ArrayList<>();
+        students.add(studentA);
+        students.add(studentB);
+        String url = "http://localhost:" + port + "/students/count";
+        HttpEntity<List<Student>> entity = new HttpEntity<>(students);
+        ResponseEntity<Long> responseEntity = testRestTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                Long.class
+        );
+        Assertions.assertNotNull(responseEntity);
+        Assertions.assertEquals(HttpStatusCode.valueOf(200), responseEntity.getStatusCode());
+        Long actual = responseEntity.getBody();
+        Assertions.assertNotNull(actual);
+        Assertions.assertEquals(actual, students.size());
+    }
+
+    @Test
+    @DisplayName("Should get average age of students")
+    void getAvgAge() {
+        Student studentA = new Student(NAME, AGE);
+        Student studentB = new Student(NEW_NAME, NEW_AGE);
+        studentRepository.save(studentA);
+        studentRepository.save(studentB);
+        List<Student> students = new ArrayList<>();
+        students.add(studentA);
+        students.add(studentB);
+        int avgAge = (students.stream().mapToInt(Student::getAge).sum()) / students.size();
+        String url = "http://localhost:" + port + "/students/avg-age";
+        HttpEntity<List<Student>> entity = new HttpEntity<>(students);
+        ResponseEntity<Integer> responseEntity = testRestTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                Integer.class
+        );
+        Assertions.assertNotNull(responseEntity);
+        Assertions.assertEquals(HttpStatusCode.valueOf(200), responseEntity.getStatusCode());
+        Integer actual = responseEntity.getBody();
+        Assertions.assertNotNull(actual);
+        Assertions.assertEquals(actual, avgAge);
+    }
+
+    @Test
+    @DisplayName("Should get amount of students of the end of the table")
+    void getLastTest() {
+        Long amount = 1L;
+        Student studentA = new Student(NAME, AGE);
+        Student studentB = new Student(NEW_NAME, NEW_AGE);
+        studentRepository.save(studentA);
+        studentRepository.save(studentB);
+        List<Student> students = new ArrayList<>();
+        students.add(studentA);
+        students.add(studentB);
+        String url = "http://localhost:" + port + "/students/last/" + amount;
+        HttpEntity<List<Student>> entity = new HttpEntity<>(students);
+        ResponseEntity<List<Student>> responseEntity = testRestTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<List<Student>>() {}
+        );
+        Assertions.assertNotNull(responseEntity);
+        Assertions.assertEquals(HttpStatusCode.valueOf(200), responseEntity.getStatusCode());
+        List<Student> actual = responseEntity.getBody();
+        Assertions.assertNotNull(actual);
+        Assertions.assertEquals(actual.size(),amount);
+        Assertions.assertNotNull(actual.get(0).getId());
+        Assertions.assertEquals(actual.get(0).getName(), studentB.getName());
+        Assertions.assertEquals(actual.get(0).getAge(), studentB.getAge());
+    }
+
 }
