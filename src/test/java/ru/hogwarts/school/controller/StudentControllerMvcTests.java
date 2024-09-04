@@ -9,12 +9,15 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -158,6 +161,61 @@ public class StudentControllerMvcTests {
                 .andExpect(jsonPath("$.name").value(student.getName()))
                 .andExpect(jsonPath("$.age").value(student.getAge()))
                 .andDo(print());
+    }
+
+    @Test
+    @DisplayName("Should get amount of students of the end of the table")
+    void getLastTest() throws Exception {
+        List<Student> students = new ArrayList<>();
+        students.add(new Student(NAME, AGE));
+        students.add(new Student(NEW_NAME, NEW_AGE));
+        students.add(new Student(NAME, NEW_AGE));
+        students.add(new Student(NEW_NAME, AGE));
+        int amount = 2;
+        List<Student> lastStudents = IntStream
+                .range(students.size() - amount, students.size()).mapToObj(students::get)
+                .collect(Collectors.toList());
+        when(studentService.getLastOfAmount((long) amount))
+                .thenReturn(lastStudents);
+        ResultActions perform = mockMvc.perform(get("/students/last/{amount}", amount));
+        perform.andExpect(jsonPath("$[0].name").value(students.get(2).getName()))
+                .andExpect(jsonPath("$[0].age").value(students.get(2).getAge()))
+                .andExpect(jsonPath("$[1].name").value(students.get(3).getName()))
+                .andExpect(jsonPath("$[1].age").value(students.get(3).getAge()))
+                .andDo(print());
+
+    }
+
+    @Test
+    @DisplayName("Should get average age of students")
+    void getAvgAgeTest() throws Exception {
+        List<Student> students = new ArrayList<>();
+        students.add(new Student(NAME, AGE));
+        students.add(new Student(NEW_NAME, NEW_AGE));
+        students.add(new Student(NAME, NEW_AGE));
+        students.add(new Student(NEW_NAME, AGE));
+        int avgAge = (students.stream().mapToInt(Student::getAge).sum()) / students.size();
+        when(studentService.getStudentsAverageAge()).thenReturn(avgAge);
+        ResultActions perform = mockMvc.perform(get("/students/avg-age"));
+        perform.andExpect(jsonPath("$").value(avgAge))
+                .andDo(print());
+
+    }
+
+    @Test
+    @DisplayName("Should get quantity of students")
+    void getCountTest() throws Exception {
+        List<Student> students = new ArrayList<>();
+        students.add(new Student(NAME, AGE));
+        students.add(new Student(NEW_NAME, NEW_AGE));
+        students.add(new Student(NAME, NEW_AGE));
+        students.add(new Student(NEW_NAME, AGE));
+        Long count = (long) students.size();
+        when(studentService.getStudentsCount()).thenReturn(count);
+        ResultActions perform = mockMvc.perform(get("/students/count"));
+        perform.andExpect(jsonPath("$").value(count))
+                .andDo(print());
+
     }
 
 }
