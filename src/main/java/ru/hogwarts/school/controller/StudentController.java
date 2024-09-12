@@ -99,4 +99,9 @@ public class StudentController {
         return studentService.getStudentsNamesAlphabeticalInitialSorted(initial);
     }
 
+    @GetMapping("avg-age-stream")
+    public int getStudentsAverageAgeStream() {
+        return studentService.getStudentsAverageAgeStream();
+    }
+
 }
