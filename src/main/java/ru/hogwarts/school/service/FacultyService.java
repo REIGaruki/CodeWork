@@ -50,7 +50,7 @@ public class FacultyService {
             logger.info("Was invoked method for update faculty");
             return faculty;
         } else {
-            logger.debug("Was invoked method for create faculty that does not exist");
+            logger.error("Was invoked method for create faculty that does not exist");
             return null;
         }
     }
@@ -63,7 +63,7 @@ public class FacultyService {
             logger.info("Was invoked method for delete faculty");
             return faculty;
         } else {
-            logger.debug("Was invoked method for delete faculty that does not exist");
+            logger.error("Was invoked method for delete faculty that does not exist");
             return null;
         }
     }

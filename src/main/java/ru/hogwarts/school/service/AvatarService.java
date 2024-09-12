@@ -54,7 +54,7 @@ public class AvatarService {
             ) {
                 bis.transferTo(bos);
             } catch (IOException e) {
-                logger.debug("IO exception is caught");
+                logger.error("IO exception is caught");
             }
             Avatar avatar = readAvatarByStudent(studentId);
             avatar.setStudent(student);

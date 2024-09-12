@@ -45,7 +45,7 @@ public class StudentService {
             logger.info("Was invoked method for update student");
             return student;
         } else {
-            logger.warn("Was invoked method for update, but student was not found");
+            logger.error("Was invoked method for update, but student was not found");
             return null;
         }
     }
@@ -58,7 +58,7 @@ public class StudentService {
             logger.info("Was invoked method for delete student");
             return student;
         } else {
-            logger.debug("Was invoked method for delete, but student was not found");
+            logger.error("Was invoked method for delete, but student was not found");
             return null;
         }
     }
