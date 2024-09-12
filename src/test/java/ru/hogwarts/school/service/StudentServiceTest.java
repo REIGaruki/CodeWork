@@ -160,6 +160,15 @@ class StudentServiceTest {
     }
 
     @Test
+    @DisplayName("Should get average age of students by stream")
+    void getAvgAgeStream() {
+        int avgAge = (AGE_1 * 3 + AGE_2 * 2) / 5;
+        when(repositoryMock.findAll()).thenReturn(students.values().stream().toList());
+        Assertions.assertEquals(avgAge, service.getStudentsAverageAgeStream());
+
+    }
+
+    @Test
     @DisplayName("Should get amount of students of the end of the table")
     void getLastOfAmount() {
         Long amount = 3L;
@@ -170,6 +179,14 @@ class StudentServiceTest {
         List<Student> expected = lastAmounOfStudents.values().stream().toList();
         when(repositoryMock.getLastOfAmount(amount)).thenReturn(expected);
         Assertions.assertEquals(expected, service.getLastOfAmount(amount));
+    }
+
+    @Test
+    @DisplayName("Should get sorted students of same letter")
+    void getSorted() {
+        List<String> studentNames = Arrays.asList(NAME_1, NAME_2, NAME_3, NAME_4, NAME_5);
+        when(repositoryMock.findAll()).thenReturn(students.values().stream().toList());
+        Assertions.assertEquals(studentNames, service.getStudentsNamesAlphabeticalInitialSorted("N"));
     }
 
 }
