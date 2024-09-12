@@ -65,13 +65,12 @@ public class FacultyService {
         return facultyRepository.findFacultiesByColor(color);
     }
 
-    public List<String> getLongestFacultyName() {
+    public String getLongestFacultyName() {
         return facultyRepository.findAll()
                 .stream()
                 .map(Faculty::getName)
-                .sorted(Comparator.comparing(String::length).reversed())
-                .limit(1)
-                .toList();
+                .max(Comparator.comparing(String::length))
+                .orElse(null);
     }
 
 }

@@ -80,7 +80,7 @@ public class FacultyController {
     }
 
     @GetMapping("longest-name")
-    public List<String> getLongestFacultyName() {
+    public String getLongestFacultyName() {
         return facultyService.getLongestFacultyName();
     }
 
