@@ -93,4 +93,10 @@ public class StudentController {
         return studentService.getLastOfAmount(amount);
     }
 
+    @GetMapping("alpha-sort")
+    public List<String> getStudentsNamesAlphabeticalInitialSorted(
+            @RequestParam(name="initial", required = false, defaultValue = "A") String initial) {
+        return studentService.getStudentsNamesAlphabeticalInitialSorted(initial);
+    }
+
 }
