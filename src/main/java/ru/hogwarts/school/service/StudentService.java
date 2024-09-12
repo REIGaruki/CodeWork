@@ -98,4 +98,19 @@ public class StudentService {
         return studentRepository.getLastOfAmount(amount);
     }
 
+    public List<Student> printParallel() {
+        List<Student> sixStudents = studentRepository.findAll().stream().limit(6).toList();
+        System.out.println(sixStudents.get(0).getName());
+        System.out.println(sixStudents.get(1).getName());
+        new Thread(() -> {
+            System.out.println(sixStudents.get(2).getName());
+            System.out.println(sixStudents.get(3).getName());
+        }).start();
+        new Thread(() -> {
+            System.out.println(sixStudents.get(4).getName());
+            System.out.println(sixStudents.get(5).getName());
+        }).start();
+        return sixStudents;
+    }
+
 }

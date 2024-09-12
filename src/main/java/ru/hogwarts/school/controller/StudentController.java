@@ -93,4 +93,9 @@ public class StudentController {
         return studentService.getLastOfAmount(amount);
     }
 
+    @GetMapping("print-parallel")
+    public List<Student> printParallel() {
+        return studentService.printParallel();
+    }
+
 }
