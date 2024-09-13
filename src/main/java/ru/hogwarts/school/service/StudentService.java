@@ -1,14 +1,19 @@
 package ru.hogwarts.school.service;
 
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
@@ -96,6 +101,25 @@ public class StudentService {
     public List<Student> getLastOfAmount(Long amount) {
         logger.info("Was invoked method for read last " + amount + " of students");
         return studentRepository.getLastOfAmount(amount);
+    }
+
+    public List<String> getStudentsNamesAlphabeticalInitialSorted(String initial) {
+//        logger.info("Was invoked method for read students in alphabetical order by letter '" + initial + "'");
+        return studentRepository.findAll()
+                .stream()
+                .parallel()
+                .map(Student::getName)
+                .map(StringUtils::capitalize)
+                .filter(name -> name.startsWith(StringUtils.capitalize(initial)))
+                .sorted()
+                .toList();
+    }
+
+    public int getStudentsAverageAgeStream() {
+        return (int) studentRepository.findAll()
+                .stream()
+                .mapToInt(Student::getAge)
+                .summaryStatistics().getAverage();
     }
 
 }

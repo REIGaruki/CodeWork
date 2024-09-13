@@ -44,14 +44,14 @@ class FacultyServiceTest {
     }
 
     @Test
-    @DisplayName("Should get list of all students")
+    @DisplayName("Should get list of all faculties")
     void getAllStudents() {
         when(repositoryMock.findAll()).thenReturn(faculties.values().stream().toList());
         Assertions.assertEquals(faculties.values().stream().toList(), service.getAllSFaculties());
     }
 
     @Test
-    @DisplayName("Should create new student")
+    @DisplayName("Should create new faculty")
     void createStudent() {
         faculties.put(6L, new Faculty("Name6", "Red"));
         Faculty expected = new Faculty("Name6", "Red");
@@ -83,7 +83,7 @@ class FacultyServiceTest {
     }
 
     @Test
-    @DisplayName("Should delete a student")
+    @DisplayName("Should delete a faculty")
     void delete() {
         faculties.remove(1L);
         Faculty expected = new Faculty("Name1", "Green");
@@ -139,6 +139,15 @@ class FacultyServiceTest {
                 .thenReturn(faculties.values().stream().filter(value -> value.getName().equals("Name1")).toList());
         actual = service.getFacultiesByColorOrName("Name1",null);
         Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    @DisplayName("Should get longest name of faculties")
+    void getLongestName() {
+        faculties.put(6L, new Faculty("Name666", "Red"));
+        String expected = faculties.get(6L).getName();
+        when(repositoryMock.findAll()).thenReturn(faculties.values().stream().toList());
+        Assertions.assertEquals(expected, service.getLongestFacultyName());
     }
 
 }

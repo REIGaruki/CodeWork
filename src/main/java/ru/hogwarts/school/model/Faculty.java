@@ -32,11 +32,6 @@ public class Faculty {
         return id;
     }
 
-    @JsonIgnore
-    public List<Student> getStudents() {
-        return students;
-    }
-
     public String getName() {
         return name;
     }
